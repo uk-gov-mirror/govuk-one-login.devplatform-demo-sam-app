@@ -26,6 +26,8 @@ const {
 
 const addLanguageParam = require("@govuk-one-login/frontend-language-toggle/build/cjs/language-param-setter.cjs");
 
+console.log("Hello Tests 3")
+
 const {
   API,
   APP,
