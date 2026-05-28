@@ -1005,7 +1005,7 @@ Resources:
         SemanticVersion: "1.0.5" # Or whichever version you published
       Parameters:
         PermissionsBoundary: "arn:aws:iam::842766856468:policy/demo-sam-app-pipeline-AppProgrammaticPermissionsBoundary-06449d80b2ef"
-        CodeSigningConfigArn: "arn:aws:signer:eu-west-2:842766856468:/signing-profiles/SigningProfile_PUjEmGHojqGy/TomQMzk3Ws"
+        CodeSigningConfigArn: "arn:aws:lambda:eu-west-2:842766856468:code-signing-config:csc-0f556542ef386617d"
 
 Outputs:
   HelloWorldApi:
