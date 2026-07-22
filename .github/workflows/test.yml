@@ -1,0 +1,24 @@
+name: Assuming Role to validate subject claim
+
+on:
+  push:
+    branches:
+      - PSREDEV-3594-test
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  assume-role:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Set up AWS creds
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::842766856468:role/demo-sam-app-pipeline-GitHubActionsRole-CyV4xI4dOf14
+          aws-region: eu-west-2
