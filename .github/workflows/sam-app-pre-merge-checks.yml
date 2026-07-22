@@ -59,10 +59,10 @@ jobs:
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
 
-      - name: Set up JDK 17 for Sonar
+      - name: Set up JDK 21 for Sonar
         uses: actions/setup-java@v5
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'adopt'
           cache: gradle
 

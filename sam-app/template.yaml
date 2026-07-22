@@ -487,7 +487,6 @@ Resources:
         Source: govuk-one-login/devplatform-demo-sam-app/sam-app/template.yaml
         CheckovRulesToSkip: CKV_AWS_116.CKV_AWS_117
 
-
   HelloWorldTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -518,92 +517,6 @@ Resources:
         - Key: Source
           Value: govuk-one-login/devplatform-demo-sam-app/sam-app/template.yaml
 
-  AccessLogsBucket:
-    Type: "AWS::S3::Bucket"
-    # checkov:skip=CKV_AWS_18:This is the access logs bucket. It should not log itself.
-    Metadata:
-      checkov:
-        skip:
-          - id: "CKV_AWS_18"
-            comment: "This is the access logs bucket. It should not log itself."
-    Properties:
-      # AccessControl: LogDeliveryWrite
-      OwnershipControls:
-          Rules:
-            - ObjectOwnership: BucketOwnerPreferred
-      BucketName: !Join
-        - "-"
-        - - !Ref AWS::StackName
-          - "accesslogsbucket"
-          - Fn::Select:
-              - 4
-              - Fn::Split:
-                  - "-"
-                  - Fn::Select:
-                      - 2
-                      - Fn::Split:
-                          - /
-                          - Ref: AWS::StackId
-      VersioningConfiguration:
-        Status: Enabled
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      # This cannot be implemented as this, as the target account needs permissions before the bucket name is know, but it permissions based on the bucketName.
-      # NotificationConfiguration:
-      #   QueueConfigurations:
-      #     - Event: "s3:ObjectCreated:*"
-      #       Queue: "arn:aws:sqs:eu-west-2:885513274347:cyber-security-s3-to-splunk-prodpython"
-      #     - Event: "s3:ObjectRestore:*"
-      #       Queue: "arn:aws:sqs:eu-west-2:885513274347:cyber-security-s3-to-splunk-prodpython"
-      Tags:
-        - Key: Product
-          Value: GOV.UK Sign In
-        - Key: System
-          Value: Dev Platform
-        - Key: Environment
-          Value: Demo
-        - Key: Service
-          Value: backend
-        - Key: Source
-          Value: govuk-one-login/devplatform-demo-sam-app/sam-app/template.yaml
-        - Key: CheckovRulesToSkip
-          Value: "CKV_AWS_18"
-
-  AccessLogsBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref AccessLogsBucket
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: EnforceSSL
-            Effect: Deny
-            Principal: "*"
-            Action: s3:*
-            Resource:
-              - !Sub ${AccessLogsBucket.Arn}
-              - !Sub ${AccessLogsBucket.Arn}/*
-            Condition:
-              Bool:
-                aws:SecureTransport: false
-  #         - Effect: "Allow"
-  #           Resource:
-  #             - !Sub "AccessLogsBucket.Arn"
-  #             - !Sub "${AccessLogsBucket.Arn}/*"
-  #           Principal:
-  #             AWS: arn:aws:logs:eu-west-2:885513274347:root #CSLS account - can limit this further if we know the specific lambda role arn
-  #             # Lambda role ARN: arn:aws:iam::885513274347:role/csls_prodpython/csls_process_s3_logs_lambda_prodpython
-  #           Action:
-  #             - "s3:Get*"
-  #             - "s3:List*"
-
   HelloWorldBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -626,7 +539,10 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
       LoggingConfiguration:
-        DestinationBucketName: !Ref AccessLogsBucket
+        DestinationBucketName: !Sub di-s3-access-logs-${AWS::AccountId}-${AWS::Region}
+        TargetObjectKeyFormat:
+          PartitionedPrefix:
+            PartitionDateSource: 'DeliveryTime'
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
