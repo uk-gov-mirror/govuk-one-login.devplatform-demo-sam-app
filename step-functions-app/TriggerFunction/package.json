@@ -14,7 +14,7 @@
     "typescript": "^5.5.3"
   },
   "dependencies": {
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.1",
     "@aws-sdk/client-sfn": "^3.985.0"
   }
 }
