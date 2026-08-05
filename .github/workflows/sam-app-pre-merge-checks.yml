@@ -31,7 +31,7 @@ jobs:
           use-installer: true  # this caches installation but is only available on Linux x86-64 runners
 
       - name: Cache Gradle packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
